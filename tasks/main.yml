@@ -1,0 +1,395 @@
+---
+
+# forced os variables
+- name: forced os variables
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - '{{ ansible_distribution }}-{{ ansible_machine | default("none") }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_release | default(0) }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.yml'
+        - '{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.yml'
+        - '{{ ansible_distribution }}.yml'
+        - '{{ ansible_os_family }}.yml'
+        - 'main.yml'
+      paths:
+        - 'vars'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+  tags: [ openssh ]
+
+# packages
+- name: packages (freebsd)
+  pkgng:
+    name: '{{ openssh_packages_freebsd | default([]) }}'
+    state: '{{ openssh_packages_freebsd_state | default("latest") }}'
+    cached: '{{ openssh_packages_freebsd_cached | default(false) }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ openssh ]
+
+- name: packages (redhat)
+  yum:
+    name: '{{ openssh_packages_redhat | default([]) }}'
+    state: '{{ openssh_packages_redhat_state | default("latest") }}'
+    update_cache: '{{ openssh_packages_redhat_update_cache | default(true) }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'RedHat'
+  tags: [ openssh ]
+
+# rc
+- name: freebsd rc.conf.d sshd (template)
+  template:
+    dest: '{{ openssh_rc_sshd_freebsd_file }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ openssh_rc_sshd_freebsd_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_rc_sshd_freebsd_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_rc_sshd_freebsd_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_rc_sshd_freebsd_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_rc_sshd_freebsd_file_validate | default(omit) }}'
+  vars:
+    tpl_default: "rc.conf.d-sshd"
+    tpl_presence: '{{ openssh_rc_sshd_freebsd_file_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.j2.in' # role default
+      paths:
+        - 'templates'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ openssh ]
+
+- name: openbsd rc (disable ssh-keygen -A)
+  replace:
+    path: '/etc/rc'
+    regexp: '^\tssh-keygen -A$'
+    replace: "#\tssh-keygen -A"
+    backup: '{{ openssh_backup }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+        and ansible_os_family == 'OpenBSD'
+  tags: [ openssh ]
+
+- name: redhat sysconfig sshd (template)
+  template:
+    dest: '{{ openssh_rc_sshd_redhat_file }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ openssh_rc_sshd_redhat_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_rc_sshd_redhat_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_rc_sshd_redhat_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_rc_sshd_redhat_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_rc_sshd_redhat_file_validate | default(omit) }}'
+  vars:
+    tpl_default: "sysconfig-sshd"
+    tpl_presence: '{{ openssh_rc_sshd_redhat_file_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.j2.in' # role default
+      paths:
+        - 'templates'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'RedHat'
+  tags: [ openssh ]
+
+# service
+- name: openssh service (systemd)
+  service:
+    name: '{{ openssh_service }}'
+    enabled: '{{ openssh_rc_sshd_enable }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_service_mgr == 'systemd'
+  tags: [ openssh ]
+
+# selinux
+# semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
+# firewalld
+
+# host keys
+- name: generate host keys (directory)
+  file:
+    path: '{{ openssh_keys_generate_directory }}'
+    state: directory
+  delegate_to: localhost
+  run_once: yes
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys permissions (find)
+  find:
+    paths: '{{ openssh_keys_generate_directory }}'
+    patterns: '*.ssh_host_*_key'
+    recurse: true
+    follow: true
+  register: openssh_find_keys
+  delegate_to: localhost
+  run_once: true
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys pub permissions (find)
+  find:
+    paths: '{{ openssh_keys_generate_directory }}'
+    patterns: '*.ssh_host_*_key.pub'
+    recurse: true
+    follow: true
+  register: openssh_find_keys_pub
+  delegate_to: localhost
+  run_once: true
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys permissions (set)
+  file:
+    path: '{{ item.path }}'
+    mode: '{{ openssh_keys_mode_local }}'
+  loop: '{{ openssh_find_keys.files }}'
+  delegate_to: localhost
+  run_once: true
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+        and openssh_find_keys is defined
+  tags: [ openssh ]
+
+- name: host keys pub permissions (set)
+  file:
+    path: '{{ item.path }}'
+    mode: '{{ openssh_keys_pub_mode_local }}'
+  loop: '{{ openssh_find_keys_pub.files }}'
+  delegate_to: localhost
+  run_once: true
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+        and openssh_find_keys_pub is defined
+  tags: [ openssh ]
+
+- name: generate host keys
+  openssh_keypair:
+    path: "{{ openssh_keys_generate_directory }}/{{ inventory_hostname }}.ssh_host_{{ item }}_key"
+    type: '{{ item }}'
+    #comment: '{{ inventory_hostname }}' # ansible 2.9
+  loop: '{{ openssh_keys }}'
+  delegate_to: localhost
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys (copy)
+  copy:
+    dest: "{{ openssh_cfg_root }}/ssh_host_{{ item }}_key"
+    src: "{{ openssh_keys_generate_directory }}/{{ inventory_hostname }}.ssh_host_{{ item }}_key"
+    mode: '{{ openssh_keys_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_keys_owner | default(openssh_owner) }}'
+    group: '{{ openssh_keys_group | default(openssh_group) }}'
+    backup: '{{ openssh_keys_backup | default(openssh_backup) }}'
+  loop: '{{ openssh_keys }}'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys pub (copy)
+  copy:
+    dest: "{{ openssh_cfg_root }}/ssh_host_{{ item }}_key.pub"
+    src: "{{ openssh_keys_generate_directory }}/{{ inventory_hostname }}.ssh_host_{{ item }}_key.pub"
+    mode: '{{ openssh_keys_pub_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_keys_pub_owner | default(openssh_owner) }}'
+    group: '{{ openssh_keys_pub_group | default(openssh_group) }}'
+    backup: '{{ openssh_keys_pub_backup | default(openssh_backup) }}'
+  loop: '{{ openssh_keys }}'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_generate
+  tags: [ openssh ]
+
+- name: host keys (delete)
+  file:
+    path: "{{ openssh_cfg_root }}/ssh_host_{{ item }}_key"
+    state: absent
+  loop: '{{ openssh_keys_todelete }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_delete
+        and item not in openssh_keys
+  tags: [ openssh ]
+
+- name: host keys pub (delete)
+  file:
+    path: "{{ openssh_cfg_root }}/ssh_host_{{ item }}_key.pub"
+    state: absent
+  loop: '{{ openssh_keys_todelete }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and openssh_keys_delete
+        and item not in openssh_keys
+  tags: [ openssh ]
+
+# moduli
+- name: safe moduli (file)
+  copy:
+    src: "{{ lookup('first_found', params) }}"
+    dest: '{{ openssh_moduli_file }}'
+    mode: '{{ openssh_moduli_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_moduli_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_moduli_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_moduli_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_moduli_file_validate | default(omit) }}'
+  vars:
+    params:
+      files:
+        - 'moduli.{{ inventory_hostname }}'
+        - 'moduli'
+        - 'moduli.in' # role default
+      paths:
+        - 'files'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+  tags: [ openssh ]
+
+- name: safe moduli (freebsd-update.conf IgnorePaths)
+  lineinfile:
+    path: '{{ openssh_freebsd_update_cfg_file }}'
+    line: 'IgnorePaths {{ openssh_moduli_file }}'
+    regex: '^IgnorePaths {{ openssh_moduli_file }}'
+    insertafter: '^IgnorePaths.*$'
+    state: present
+    backup: yes
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ openssh ]
+
+# config
+# ssh
+- name: ssh config
+  template:
+    dest: '{{ openssh_ssh_cfg_file }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ openssh_ssh_cfg_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_ssh_cfg_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_ssh_cfg_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_ssh_cfg_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_ssh_cfg_file_validate | default(omit) }}'
+  vars:
+    tpl_default: "ssh_config"
+    tpl_presence: '{{ openssh_ssh_cfg_file_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.j2.in' # role default
+      paths:
+        - 'templates'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+  tags: [ openssh ]
+
+- name: ssh config (freebsd-update.conf IgnorePaths)
+  lineinfile:
+    path: '{{ openssh_freebsd_update_cfg_file }}'
+    line: 'IgnorePaths {{ openssh_ssh_cfg_file }}'
+    regex: '^IgnorePaths {{ openssh_ssh_cfg_file }}'
+    insertafter: '^IgnorePaths.*$'
+    state: present
+    backup: yes
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ openssh ]
+
+# sshd
+- name: sshd config
+  template:
+    dest: '{{ openssh_sshd_cfg_file }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ openssh_sshd_cfg_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_sshd_cfg_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_sshd_cfg_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_sshd_cfg_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_sshd_cfg_file_validate | default(omit) }}'
+  vars:
+    tpl_default: "sshd_config"
+    tpl_presence: '{{ openssh_sshd_cfg_file_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.j2.in' # role default
+      paths:
+        - 'templates'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+  tags: [ openssh ]
+
+- name: sshd config (freebsd-update.conf IgnorePaths)
+  lineinfile:
+    path: '{{ openssh_freebsd_update_cfg_file }}'
+    line: 'IgnorePaths {{ openssh_sshd_cfg_file }}'
+    regex: '^IgnorePaths {{ openssh_sshd_cfg_file }}'
+    insertafter: '^IgnorePaths.*$'
+    state: present
+    backup: yes
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'FreeBSD'
+  tags: [ openssh ]
+
+# flush
+- name: flush handlers
+  meta: flush_handlers
+
+# reboot
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

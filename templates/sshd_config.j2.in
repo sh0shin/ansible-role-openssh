@@ -1,0 +1,84 @@
+# {{ openssh_sshd_cfg_file }}
+# {{ ansible_managed }}
+
+{% for host_key in openssh_keys                                             %}
+HostKey {{ openssh_cfg_root }}/ssh_host_{{ host_key }}_key
+{% endfor                                                                   %}
+Ciphers {{ openssh_ciphers | join(',') }}
+HostKeyAlgorithms {{ openssh_hostkeys | join(',') }}
+HostbasedAcceptedKeyTypes {{ openssh_hostkeys | join(',') }}
+KexAlgorithms {{ openssh_kexalgorithms | join(',') }}
+MACs {{ openssh_macs | join(',') }}
+PubkeyAcceptedKeyTypes {{ openssh_pubkeys | join(',') }}
+
+{% for opt, val in openssh_sshd_cfg_defaults.items()                        %}
+{%  if openssh_sshd_cfg_distribution[opt] is defined                        %}
+{%    set val = openssh_sshd_cfg_distribution[opt]                          %}
+{%  elif openssh_sshd_cfg[opt] is defined                                   %}
+{%    set val = openssh_sshd_cfg[opt]                                       %}
+{%  endif %}
+{%  if val is sameas true                                                   %}
+{{ opt }} yes
+{%  elif val is sameas false                                                %}
+{{ opt }} no
+{%  elif val is string or val is number                                     %}
+{{ opt }} {{ val }}
+{%  else                                                                    %}
+{%    for mval in val                                                       %}
+{{ opt }} {{ mval }}
+{%    endfor                                                                %}
+{%  endif                                                                   %}
+{% endfor                                                                   %}
+{% for opt, val in openssh_sshd_cfg_distribution.items()                    %}
+{%  if opt not in openssh_sshd_cfg_defaults and opt not in openssh_sshd_cfg %}
+{%    if val is sameas true                                                 %}
+{{ opt }} yes
+{%    elif val is sameas false                                              %}
+{{ opt }} no
+{%    elif val is string or val is number                                   %}
+{{ opt }} {{ val }}
+{%    else                                                                  %}
+{%      for mval in val                                                     %}
+{{ opt }} {{ mval }}
+{%      endfor                                                              %}
+{%    endif                                                                 %}
+{%  endif                                                                   %}
+{% endfor                                                                   %}
+{% for opt, val in openssh_sshd_cfg.items()                                 %}
+{%  if opt not in openssh_sshd_cfg_defaults                                 %}
+{%    if val is sameas true                                                 %}
+{{ opt }} yes
+{%    elif val is sameas false                                              %}
+{{ opt }} no
+{%    elif val is string or val is number                                   %}
+{{ opt }} {{ val }}
+{%    else                                                                  %}
+{%      for mval in val                                                     %}
+{{ opt }} {{ mval }}
+{%      endfor                                                              %}
+{%    endif                                                                 %}
+{%  endif                                                                   %}
+{% endfor                                                                   %}
+{% if openssh_sshd_cfg_allow_users                                          %}
+AllowUsers {{ openssh_sshd_cfg_allow_users | join(' ') }}
+{% endif                                                                    %}
+{% if openssh_sshd_cfg_allow_groups                                         %}
+AllowGroups {{ openssh_sshd_cfg_allow_groups | join(' ') }}
+{% endif                                                                    %}
+{% for match in openssh_sshd_cfg_match                                      %}
+Match {{ match.Match }}
+{%  for match_opt, match_val in match.items()                               %}
+{%    if match_opt != 'Match'                                               %}
+{%      if match_val is sameas true                                         %}
+  {{ match_opt }} yes
+{%      elif match_val is sameas false                                      %}
+  {{ match_opt }} no
+{%      elif match_val is string or match_val is number                     %}
+  {{ match_opt }} {{ match_val }}
+{%      endif                                                               %}
+{%    endif                                                                 %}
+{%  endfor                                                                  %}
+{% endfor                                                                   %}
+
+# vim: set sw=2 ts=2 et :
+# eof

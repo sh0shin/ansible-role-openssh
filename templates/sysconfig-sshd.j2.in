@@ -1,0 +1,13 @@
+# {{ openssh_rc_sshd_redhat_file }}
+# {{ ansible_managed }}
+
+{% if openssh_keys_generate is sameas true  %}
+# Ansible managed keys
+AUTOCREATE_SERVER_KEYS=""
+{% else                                     %}
+AUTOCREATE_SERVER_KEYS="{{ openssh_keys | join(' ') | upper }}"
+{% endif %}
+SSH_USE_STRONG_RNG={{ openssh_rc_sshd_strong_rng }}
+
+# vim: set sw=2 ts=2 et :
+# eof

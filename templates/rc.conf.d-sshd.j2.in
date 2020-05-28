@@ -1,0 +1,26 @@
+# {{ openssh_rc_sshd_freebsd_file }}
+# {{ ansible_managed }}
+
+sshd_enable="{% if openssh_rc_sshd_enable is sameas true %}YES{% else %}NO{% endif %}"
+sshd_flags="{% if openssh_rc_sshd_flags %}{{ openssh_rc_sshd_flags }}{% endif %}"
+
+{% if openssh_keys_generate is sameas true  %}
+# Ansible managed keys
+sshd_dsa_enable="NO"
+sshd_ecdsa_enable="NO"
+sshd_ed25519_enable="NO"
+sshd_rsa1_enable="NO"
+sshd_rsa_enable="NO"
+{% else                                     %}
+{%  for key in openssh_keys                 %}
+sshd_{{ key }}_enable="YES"
+{%  endfor                                  %}
+{%  for key in openssh_keys_todelete        %}
+{%    if key not in openssh_keys            %}
+sshd_{{ key }}_enable="NO"
+{%    endif                                 %}
+{%  endfor                                  %}
+{% endif                                    %}
+
+# vim: set sw=2 ts=2 et :
+# eof

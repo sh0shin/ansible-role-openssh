@@ -1,0 +1,9 @@
+---
+
+- name: restart_openssh
+  service:
+    name: '{{ openssh_service }}'
+    state: restarted
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

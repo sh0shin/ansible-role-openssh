@@ -1,0 +1,153 @@
+---
+
+# enabled
+openssh_enabled: true
+
+# mode/owner/group/backup defaults
+openssh_file_mode: "0444"
+openssh_dir_mode: "0755"
+openssh_owner: "root"
+openssh_group: "root"
+openssh_backup: true
+
+# packages
+openssh_packages_freebsd: [] # using base openssh
+openssh_packages_redhat: # RedHat/CentOS
+  - openssh
+
+openssh_service: "sshd"
+
+# key gen
+openssh_keys_generate: true
+openssh_keys_generate_directory: '{{ inventory_dir }}/.ssh'
+
+openssh_keys_mode: "0440"
+openssh_keys_mode_local: "0600" # local generated keys
+openssh_keys_owner: "root"
+openssh_keys_group: "root"
+
+openssh_keys_pub_mode: "0444"
+openssh_keys_pub_mode_local: "0640" # local generated keys
+openssh_keys_pub_owner: "root"
+openssh_keys_pub_group: "root"
+
+# rc
+openssh_rc_sshd_freebsd_file: "/etc/rc.conf.d/sshd"
+openssh_rc_sshd_redhat_file: "/etc/sysconfig/sshd" # RedHat/CentOS
+
+openssh_rc_sshd_enable: true
+openssh_rc_sshd_flags: ''     # FreeBSD
+openssh_rc_sshd_strong_rng: 0 # RedHat/CentOS
+
+# misc
+openssh_freebsd_update_cfg_file: "/etc/freebsd-update.conf"
+
+# keys, ciphers, hostkeyalgorithms, macs & kexalgorithms
+openssh_keys:
+  - rsa
+  - ed25519
+
+openssh_keys_delete: true
+openssh_keys_todelete: # openssh_keys are excluded!
+  - dsa
+  - ecdsa
+  - ed25519
+  - rsa
+  - rsa1
+
+openssh_ciphers:
+  - 'chacha20-poly1305@openssh.com'
+  - 'aes256-gcm@openssh.com'
+  - 'aes128-gcm@openssh.com'
+  - 'aes256-ctr'
+  - 'aes192-ctr'
+  - 'aes128-ctr'
+
+openssh_hostkeys:
+  - 'ssh-ed25519-cert-v01@openssh.com'
+  - 'ssh-ed25519'
+  #- 'ssh-rsa'
+  #- 'ssh-rsa-cert-v01@openssh.com'
+  #- 'rsa-sha2-512-cert-v01@openssh.com'
+  - 'rsa-sha2-512'
+  #- 'rsa-sha2-256-cert-v01@openssh.com'
+  - 'rsa-sha2-256'
+
+openssh_pubkeys: '{{ openssh_hostkeys }}'
+
+openssh_macs:
+  - 'hmac-sha2-512-etm@openssh.com'
+  - 'hmac-sha2-256-etm@openssh.com'
+  - 'umac-128-etm@openssh.com'
+  #- 'hmac-sha2-512'
+  #- 'hmac-sha2-256'
+
+openssh_kexalgorithms:
+  - 'curve25519-sha256@libssh.org'
+  - 'curve25519-sha256'
+  #- 'diffie-hellman-group18-sha512'
+  #- 'diffie-hellman-group16-sha512'
+  #- 'diffie-hellman-group14-sha256'
+  #- 'diffie-hellman-group-exchange-sha256'
+
+# config
+openssh_cfg_root: "/etc/ssh"
+
+# moduli
+openssh_moduli_file: "{{ openssh_cfg_root }}/moduli"
+
+# ssh_config
+openssh_ssh_cfg_file: "{{ openssh_cfg_root }}/ssh_config"
+openssh_ssh_cfg: {}
+openssh_ssh_cfg_defaults:
+  ExitOnForwardFailure: yes
+  HashKnownHosts: no
+  StrictHostkeyChecking: ask
+  VerifyHostKeyDNS: no
+
+openssh_ssh_cfg_distribution: {}
+
+# sshd_config
+openssh_sshd_cfg_file: "{{ openssh_cfg_root }}/sshd_config"
+openssh_sshd_cfg_file_validate: "sshd -t -f %s"
+
+openssh_sshd_cfg_match: {}
+openssh_sshd_cfg_allow_users: []
+openssh_sshd_cfg_allow_groups: []
+
+openssh_sshd_cfg: {}
+openssh_sshd_cfg_defaults:
+  AcceptEnv: 'LANG LANGUAGE LC_*'
+  AllowAgentForwarding: no
+  AllowStreamLocalForwarding: no
+  AllowTcpForwarding: no
+  AuthorizedKeysFile: '.ssh/authorized_keys'
+  Banner: {}
+  ChallengeResponseAuthentication: no
+  ClientAliveCountMax: 2
+  ClientAliveInterval: 15
+  Compression: no
+  GatewayPorts: no
+  HostbasedAuthentication: no
+  LogLevel: 'INFO'
+  LoginGraceTime: 30
+  PasswordAuthentication: no
+  PermitEmptyPasswords: no
+  PermitRootLogin: prohibit-password
+  PermitTunnel: no
+  PermitUserEnvironment: no
+  Port: 22
+  PrintMotd: yes
+  StrictModes: yes
+  Subsystem: 'sftp internal-sftp'
+  SyslogFacility: 'AUTH'
+  TCPKeepAlive: no
+  UseDNS: no
+  UsePAM: yes
+  VersionAddendum: 'none'
+  X11Forwarding: no
+
+openssh_sshd_cfg_distribution: {}
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof

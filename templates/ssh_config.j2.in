@@ -1,0 +1,60 @@
+# {{ openssh_ssh_cfg_file }}
+# {{ ansible_managed }}
+
+Ciphers {{ openssh_ciphers | join(',') }}
+HostKeyAlgorithms {{ openssh_hostkeys | join(',') }}
+KexAlgorithms {{ openssh_kexalgorithms | join(',') }}
+MACs {{ openssh_macs | join(',') }}
+PubkeyAcceptedKeyTypes {{ openssh_pubkeys | join(',') }}
+
+{% for opt, val in openssh_ssh_cfg_defaults.items()                       %}
+{%  if openssh_ssh_cfg_distribution[opt] is defined                       %}
+{%    set val = openssh_ssh_cfg_distribution[opt]                         %}
+{%  elif openssh_ssh_cfg[opt] is defined                                  %}
+{%    set val = openssh_ssh_cfg[opt]                                      %}
+{%  endif %}
+{%  if val is sameas true                                                 %}
+{{ opt }} yes
+{%  elif val is sameas false                                              %}
+{{ opt }} no
+{%  elif val is string or val is number                                   %}
+{{ opt }} {{ val }}
+{%  else                                                                  %}
+{%   for mval in val                                                      %}
+{{ opt }} {{ mval }}
+{%   endfor                                                               %}
+{%  endif                                                                 %}
+{% endfor                                                                 %}
+{% for opt, val in openssh_ssh_cfg_distribution.items()                   %}
+{%  if opt not in openssh_ssh_cfg_defaults and opt not in openssh_ssh_cfg %}
+{%    if val is sameas true                                               %}
+{{ opt }} yes
+{%    elif val is sameas false                                            %}
+{{ opt }} no
+{%    elif val is string or val is number                                 %}
+{{ opt }} {{ val }}
+{%    else                                                                %}
+{%      for mval in val                                                   %}
+{{ opt }} {{ mval }}
+{%      endfor                                                            %}
+{%    endif                                                               %}
+{%  endif                                                                 %}
+{% endfor                                                                 %}
+{% for opt, val in openssh_ssh_cfg.items()                                %}
+{%  if opt not in openssh_ssh_cfg_defaults                                %}
+{%    if val is sameas true                                               %}
+{{ opt }} yes
+{%    elif val is sameas false                                            %}
+{{ opt }} no
+{%    elif val is string or val is number                                 %}
+{{ opt }} {{ val }}
+{%    else                                                                %}
+{%      for mval in val                                                   %}
+{{ opt }} {{ mval }}
+{%      endfor                                                            %}
+{%    endif                                                               %}
+{%  endif                                                                 %}
+{% endfor                                                                 %}
+
+# vim: set sw=2 ts=2 et :
+# eof

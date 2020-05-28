@@ -1,0 +1,17 @@
+---
+
+openssh_group: "wheel"
+
+openssh_keys_mode: "0400"
+openssh_keys_group: "wheel"
+
+openssh_keys_pub_mode: "0440"
+openssh_keys_pub_group: "wheel"
+
+openssh_moduli_file: "/etc/moduli"
+
+openssh_sshd_cfg_distribution:
+  UsePAM: {}
+
+# vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
+# eof
