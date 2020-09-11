@@ -175,7 +175,7 @@
     mode: '{{ openssh_keys_mode_local }}'
   loop: '{{ openssh_find_keys.files }}'
   loop_control:
-    label: '{{ item.path }}'
+    label: '{{ item.path | basename }}'
   delegate_to: localhost
   run_once: true
   when: openssh_enabled
@@ -190,7 +190,7 @@
     mode: '{{ openssh_keys_pub_mode_local }}'
   loop: '{{ openssh_find_keys_pub.files }}'
   loop_control:
-    label: '{{ item.path }}'
+    label: '{{ item.path | basename }}'
   delegate_to: localhost
   run_once: true
   when: openssh_enabled
