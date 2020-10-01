@@ -44,8 +44,8 @@ openssh_freebsd_update_cfg_file: "/etc/freebsd-update.conf"
 
 # keys, ciphers, hostkeyalgorithms, macs & kexalgorithms
 openssh_keys:
-  - rsa
   - ed25519
+  - rsa
 
 openssh_keys_delete: yes
 openssh_keys_todelete: # openssh_keys are excluded!
@@ -66,12 +66,12 @@ openssh_ciphers:
 openssh_hostkeys:
   - 'ssh-ed25519-cert-v01@openssh.com'
   - 'ssh-ed25519'
+  - 'rsa-sha2-512'
+  - 'rsa-sha2-256'
   #- 'ssh-rsa'
   #- 'ssh-rsa-cert-v01@openssh.com'
   #- 'rsa-sha2-512-cert-v01@openssh.com'
-  - 'rsa-sha2-512'
   #- 'rsa-sha2-256-cert-v01@openssh.com'
-  - 'rsa-sha2-256'
 
 openssh_pubkeys: '{{ openssh_hostkeys }}'
 
@@ -83,8 +83,8 @@ openssh_macs:
   #- 'hmac-sha2-256'
 
 openssh_kexalgorithms:
-  - 'curve25519-sha256@libssh.org'
   - 'curve25519-sha256'
+  - 'curve25519-sha256@libssh.org'
   #- 'diffie-hellman-group18-sha512'
   #- 'diffie-hellman-group16-sha512'
   #- 'diffie-hellman-group14-sha256'
