@@ -16,6 +16,8 @@ PubkeyAcceptedKeyTypes {{ openssh_pubkeys | join(',') }}
 {%    set val = openssh_sshd_cfg_distribution[opt]                          %}
 {%  elif openssh_sshd_cfg[opt] is defined                                   %}
 {%    set val = openssh_sshd_cfg[opt]                                       %}
+{%  elif openssh_sshd_cfg_local[opt] is defined                             %}
+{%    set val = openssh_sshd_cfg_local[opt]                                 %}
 {%  endif %}
 {%  if val is sameas true                                                   %}
 {{ opt }} yes
@@ -30,7 +32,9 @@ PubkeyAcceptedKeyTypes {{ openssh_pubkeys | join(',') }}
 {%  endif                                                                   %}
 {% endfor                                                                   %}
 {% for opt, val in openssh_sshd_cfg_distribution.items()                    %}
-{%  if opt not in openssh_sshd_cfg_defaults and opt not in openssh_sshd_cfg %}
+{%  if opt not in openssh_sshd_cfg_defaults
+    and opt not in openssh_sshd_cfg
+    and opt not in openssh_sshd_cfg_local                                   %}
 {%    if val is sameas true                                                 %}
 {{ opt }} yes
 {%    elif val is sameas false                                              %}
@@ -45,6 +49,22 @@ PubkeyAcceptedKeyTypes {{ openssh_pubkeys | join(',') }}
 {%  endif                                                                   %}
 {% endfor                                                                   %}
 {% for opt, val in openssh_sshd_cfg.items()                                 %}
+{%  if opt not in openssh_sshd_cfg_defaults
+    and opt not in openssh_sshd_cfg_local                                   %}
+{%    if val is sameas true                                                 %}
+{{ opt }} yes
+{%    elif val is sameas false                                              %}
+{{ opt }} no
+{%    elif val is string or val is number                                   %}
+{{ opt }} {{ val }}
+{%    else                                                                  %}
+{%      for mval in val                                                     %}
+{{ opt }} {{ mval }}
+{%      endfor                                                              %}
+{%    endif                                                                 %}
+{%  endif                                                                   %}
+{% endfor                                                                   %}
+{% for opt, val in openssh_sshd_cfg_local.items()                           %}
 {%  if opt not in openssh_sshd_cfg_defaults                                 %}
 {%    if val is sameas true                                                 %}
 {{ opt }} yes

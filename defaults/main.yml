@@ -147,6 +147,7 @@ openssh_sshd_cfg_defaults:
   VersionAddendum: 'none'
   X11Forwarding: no
 
+openssh_sshd_cfg_local: {}
 openssh_sshd_cfg_distribution: {}
 
 # vim: set syn=yaml sw=2 ts=2 et colorcolumn=160 :
