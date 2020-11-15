@@ -20,6 +20,7 @@ openssh_service: "sshd"
 # key gen
 openssh_keys_generate: yes
 openssh_keys_generate_directory: '{{ inventory_dir }}/.ssh'
+openssh_keys_generate_directory_mode: "0750"
 
 openssh_keys_mode: "0440"
 openssh_keys_mode_local: "0600" # local generated keys

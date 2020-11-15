@@ -133,6 +133,7 @@
 - name: generate host keys (directory)
   file:
     path: '{{ openssh_keys_generate_directory }}'
+    mode: '{{ openssh_keys_generate_directory_mode }}'
     state: directory
   delegate_to: localhost
   run_once: yes
