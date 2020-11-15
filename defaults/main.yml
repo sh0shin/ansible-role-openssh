@@ -106,6 +106,7 @@ openssh_ssh_cfg_defaults:
   StrictHostkeyChecking: ask
   VerifyHostKeyDNS: no
 
+openssh_ssh_cfg_local: {}
 openssh_ssh_cfg_distribution: {}
 
 # sshd_config
