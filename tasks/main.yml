@@ -14,6 +14,7 @@
         - '{{ ansible_os_family }}.yml'
         - 'main.yml'
       paths:
+        #- '{{ inventory_dir }}/var'
         - 'vars'
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
@@ -64,6 +65,7 @@
         - '{{ tpl_presence }}.j2'
         - '{{ tpl_presence }}.j2.in' # role default
       paths:
+        - '{{ inventory_dir }}/templates'
         - 'templates'
   notify:
     - restart_openssh
@@ -107,6 +109,7 @@
         - '{{ tpl_presence }}.j2'
         - '{{ tpl_presence }}.j2.in' # role default
       paths:
+        - '{{ inventory_dir }}/templates'
         - 'templates'
   notify:
     - restart_openssh
@@ -283,6 +286,7 @@
         - 'moduli'
         - 'moduli.in' # role default
       paths:
+        - '{{ inventory_dir }}/files'
         - 'files'
   notify:
     - restart_openssh
@@ -328,6 +332,7 @@
         - '{{ tpl_presence }}.j2'
         - '{{ tpl_presence }}.j2.in' # role default
       paths:
+        - '{{ inventory_dir }}/templates'
         - 'templates'
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
@@ -370,6 +375,7 @@
         - '{{ tpl_presence }}.j2'
         - '{{ tpl_presence }}.j2.in' # role default
       paths:
+        - '{{ inventory_dir }}/templates'
         - 'templates'
   notify:
     - restart_openssh
