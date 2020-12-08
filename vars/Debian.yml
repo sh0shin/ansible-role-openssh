@@ -1,0 +1,7 @@
+---
+
+openssh_sshd_cfg_distribution:
+  DebianBanner: no
+
+# vim: set ft=yaml.ansible sw=2 ts=2 et colorcolumn=160 :
+# eof
