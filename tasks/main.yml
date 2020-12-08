@@ -24,6 +24,16 @@
   tags: [ openssh ]
 
 # packages
+- name: packages (debian/ubuntu)
+  apt:
+    name: '{{ openssh_packages_debian | default([]) }}'
+    state: '{{ openssh_packages_debian_state | default("latest") }}'
+    update_cache: '{{ openssh_packages_debian_update_cache | default(true) }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'Debian'
+  tags: [ openssh ]
+
 - name: packages (freebsd)
   pkgng:
     name: '{{ openssh_packages_freebsd | default([]) }}'

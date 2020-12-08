@@ -11,6 +11,8 @@ openssh_group: "root"
 openssh_backup: yes
 
 # packages
+openssh_packages_debian: # Debian/Ubuntu
+  - openssh-server
 openssh_packages_freebsd: [] # using base openssh
 openssh_packages_redhat: # RedHat/CentOS
   - openssh

@@ -1,9 +1,10 @@
 ---
 
 openssh_os_family_supported:
+  - Debian  # Debian
   - FreeBSD
   - OpenBSD
-  - RedHat # CentOS
+  - RedHat  # CentOS
 
 # vim: set ft=yaml.ansible sw=2 ts=2 et colorcolumn=160 :
 # eof
