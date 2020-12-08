@@ -44,7 +44,7 @@
         and ansible_os_family == 'FreeBSD'
   tags: [ openssh ]
 
-- name: packages (redhat)
+- name: packages (redhat/centos)
   yum:
     name: '{{ openssh_packages_redhat | default([]) }}'
     state: '{{ openssh_packages_redhat_state | default("latest") }}'
@@ -99,7 +99,7 @@
         and ansible_os_family == 'OpenBSD'
   tags: [ openssh ]
 
-- name: redhat sysconfig sshd (template)
+- name: redhat/centos sysconfig sshd (template)
   template:
     dest: '{{ openssh_rc_sshd_redhat_file }}'
     src: "{{ lookup('first_found', params) }}"
