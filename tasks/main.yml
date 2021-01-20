@@ -76,7 +76,7 @@
         - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
         - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
         - '{{ tpl_presence }}.j2'
-        - '{{ tpl_presence }}.j2.in' # role default
+        - '{{ tpl_presence }}.in.j2'  # role default
       paths:
         - '{{ inventory_dir }}/templates'
         - 'templates'
@@ -120,7 +120,7 @@
         - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
         - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
         - '{{ tpl_presence }}.j2'
-        - '{{ tpl_presence }}.j2.in' # role default
+        - '{{ tpl_presence }}.in.j2'  # role default
       paths:
         - '{{ inventory_dir }}/templates'
         - 'templates'
@@ -343,7 +343,7 @@
         - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
         - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
         - '{{ tpl_presence }}.j2'
-        - '{{ tpl_presence }}.j2.in' # role default
+        - '{{ tpl_presence }}.in.j2'  # role default
       paths:
         - '{{ inventory_dir }}/templates'
         - 'templates'
@@ -386,7 +386,7 @@
         - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
         - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
         - '{{ tpl_presence }}.j2'
-        - '{{ tpl_presence }}.j2.in' # role default
+        - '{{ tpl_presence }}.in.j2'  # role default
       paths:
         - '{{ inventory_dir }}/templates'
         - 'templates'
