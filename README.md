@@ -14,7 +14,7 @@ See `defaults/main.yml` for now.
 ```yaml
 - hosts: all
   roles:
-    - { role: sh0shin.openssh }
+    - { role: sh0shin.openssh, openssh_enabled: yes }
 ```
 
 ## License

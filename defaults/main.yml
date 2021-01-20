@@ -1,7 +1,7 @@
 ---
 
 # enabled
-openssh_enabled: yes
+openssh_enabled: no
 
 # mode/owner/group/backup defaults
 openssh_file_mode: "0444"
