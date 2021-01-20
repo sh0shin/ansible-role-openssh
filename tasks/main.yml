@@ -412,8 +412,3 @@
 # flush
 - name: flush handlers
   meta: flush_handlers
-
-# reboot
-
-# vim: set ft=yaml.ansible sw=2 ts=2 et colorcolumn=160 :
-# eof

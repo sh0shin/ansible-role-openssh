@@ -12,6 +12,3 @@ openssh_moduli_file: "/etc/moduli"
 
 openssh_sshd_cfg_distribution:
   UsePAM: {}
-
-# vim: set ft=yaml.ansible sw=2 ts=2 et colorcolumn=160 :
-# eof

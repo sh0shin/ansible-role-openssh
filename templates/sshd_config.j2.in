@@ -99,6 +99,3 @@ Match {{ match.Match }}
 {%    endif                                                                 %}
 {%  endfor                                                                  %}
 {% endfor                                                                   %}
-
-# vim: set sw=2 ts=2 et :
-# eof

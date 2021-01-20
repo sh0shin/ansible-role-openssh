@@ -21,6 +21,3 @@ sshd_{{ key }}_enable="NO"
 {%    endif                                 %}
 {%  endfor                                  %}
 {% endif                                    %}
-
-# vim: set sw=2 ts=2 et :
-# eof
