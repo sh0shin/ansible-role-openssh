@@ -11,10 +11,10 @@ openssh_group: "root"
 openssh_backup: yes
 
 # packages
-openssh_packages_debian: # Debian/Ubuntu
+openssh_packages_debian:  # Debian/Ubuntu
   - openssh-server
-openssh_packages_freebsd: [] # using base openssh
-openssh_packages_redhat: # RedHat/CentOS
+openssh_packages_freebsd: []  # using base openssh
+openssh_packages_redhat:  # RedHat/CentOS
   - openssh
 
 openssh_service: "sshd"
@@ -25,22 +25,22 @@ openssh_keys_generate_directory: "{{ inventory_dir }}/files/ssh"
 openssh_keys_generate_directory_mode: "0750"
 
 openssh_keys_mode: "0440"
-openssh_keys_mode_local: "0600" # local generated keys
+openssh_keys_mode_local: "0600"  # local generated keys
 openssh_keys_owner: "root"
 openssh_keys_group: "root"
 
 openssh_keys_pub_mode: "0444"
-openssh_keys_pub_mode_local: "0640" # local generated keys
+openssh_keys_pub_mode_local: "0640"  # local generated keys
 openssh_keys_pub_owner: "root"
 openssh_keys_pub_group: "root"
 
 # rc
 openssh_rc_sshd_freebsd_file: "/etc/rc.conf.d/sshd"
-openssh_rc_sshd_redhat_file: "/etc/sysconfig/sshd" # RedHat/CentOS
+openssh_rc_sshd_redhat_file: "/etc/sysconfig/sshd"  # RedHat/CentOS
 
 openssh_rc_sshd_enable: yes
 openssh_rc_sshd_flags: ''     # FreeBSD
-openssh_rc_sshd_strong_rng: 0 # RedHat/CentOS
+openssh_rc_sshd_strong_rng: 0  # RedHat/CentOS
 
 # misc
 openssh_freebsd_update_cfg_file: "/etc/freebsd-update.conf"
@@ -51,7 +51,7 @@ openssh_keys:
   - rsa
 
 openssh_keys_delete: yes
-openssh_keys_todelete: # openssh_keys are excluded!
+openssh_keys_todelete:  # openssh_keys are excluded!
   - dsa
   - ecdsa
   - ed25519
