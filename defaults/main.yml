@@ -4,6 +4,7 @@
 openssh_enabled: no
 
 # mode/owner/group/backup defaults
+openssh_bin_mode: "0555"
 openssh_file_mode: "0444"
 openssh_dir_mode: "0755"
 openssh_owner: "root"
@@ -17,6 +18,7 @@ openssh_packages_freebsd: []  # using base openssh
 openssh_packages_redhat:  # RedHat/CentOS
   - openssh
 
+# service
 openssh_service: "sshd"
 
 # key gen
@@ -24,13 +26,13 @@ openssh_keys_generate: no
 openssh_keys_generate_directory: "{{ inventory_dir }}/files/ssh"
 openssh_keys_generate_directory_mode: "0750"
 
-openssh_keys_mode: "0440"
+openssh_keys_mode: "0400"
 openssh_keys_mode_local: "0600"  # local generated keys
 openssh_keys_owner: "root"
 openssh_keys_group: "root"
 
 openssh_keys_pub_mode: "0444"
-openssh_keys_pub_mode_local: "0640"  # local generated keys
+openssh_keys_pub_mode_local: "0644"  # local generated keys
 openssh_keys_pub_owner: "root"
 openssh_keys_pub_group: "root"
 
@@ -41,6 +43,9 @@ openssh_rc_sshd_redhat_file: "/etc/sysconfig/sshd"  # RedHat/CentOS
 openssh_rc_sshd_enable: yes
 openssh_rc_sshd_flags: ''     # FreeBSD
 openssh_rc_sshd_strong_rng: 0  # RedHat/CentOS
+
+# privilege separation directory
+openssh_privsep_directory: "/var/empty"
 
 # misc
 openssh_freebsd_update_cfg_file: "/etc/freebsd-update.conf"

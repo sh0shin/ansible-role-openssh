@@ -131,6 +131,19 @@
         and ansible_os_family == 'RedHat'
   tags: [ openssh ]
 
+# privilege separation directory
+- name: openssh privilege separation (directory)
+  file:
+    dest: '{{ openssh_privsep_directory }}'
+    state: directory
+    mode: '{{ openssh_privsep_dir_mode | default(openssh_dir_mode) }}'
+    owner: '{{ openssh_privsep_dir_owner | default(openssh_owner) }}'
+    group: '{{ openssh_privsep_dir_group | default(openssh_group) }}'
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+  tags:
+    - openssh
+
 # service
 - name: openssh service (systemd)
   service:
@@ -153,6 +166,8 @@
     state: directory
   delegate_to: localhost
   run_once: yes
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -167,6 +182,8 @@
   register: openssh_find_keys
   delegate_to: localhost
   run_once: true
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -181,6 +198,8 @@
   register: openssh_find_keys_pub
   delegate_to: localhost
   run_once: true
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -195,6 +214,8 @@
     label: '{{ item.path | basename }}'
   delegate_to: localhost
   run_once: true
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -210,6 +231,8 @@
     label: '{{ item.path | basename }}'
   delegate_to: localhost
   run_once: true
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -223,6 +246,8 @@
     #comment: '{{ inventory_hostname }}' # ansible 2.9
   loop: '{{ openssh_keys }}'
   delegate_to: localhost
+  vars:
+    ansible_become: no
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
@@ -297,7 +322,7 @@
       files:
         - 'moduli.{{ inventory_hostname }}'
         - 'moduli'
-        - 'moduli.in' # role default
+        - 'moduli.in'   # role default
       paths:
         - '{{ inventory_dir }}/files'
         - 'files'
