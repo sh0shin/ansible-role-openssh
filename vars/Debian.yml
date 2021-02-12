@@ -1,4 +1,7 @@
 ---
 
+openssh_service: "ssh"
+openssh_privsep_directory: "/run/sshd"
+
 openssh_sshd_cfg_distribution:
   DebianBanner: no
