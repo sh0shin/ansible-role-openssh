@@ -1,0 +1,12 @@
+---
+- name: converge
+  hosts: all
+
+  become: true
+  gather_facts: true
+  vars:
+    openssh_enabled: true
+    openssh_keys_generate: true
+    openssh_keys_generate_directory: "{{ playbook_dir }}/files/ssh"
+  roles:
+    - ansible-role-openssh

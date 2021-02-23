@@ -1,0 +1,36 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: centos-7
+    image: sh0shin/centos-7-python3:latest
+    privileged: true
+    pre_build_image: true
+  - name: centos-8
+    image: sh0shin/centos-7-python3:latest
+    privileged: true
+    pre_build_image: true
+  - name: debian-9
+    image: sh0shin/debian-9-python3:latest
+    privileged: true
+    pre_build_image: true
+  - name: debian-10
+    image: sh0shin/debian-10-python3:latest
+    privileged: true
+    pre_build_image: true
+  - name: ubuntu-1804
+    image: sh0shin/ubuntu-18.04-python3:latest
+    privileged: true
+    pre_build_image: true
+  - name: ubuntu-2004
+    image: sh0shin/ubuntu-20.04-python3:latest
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  ansible_args:
+    - "-D"
+  playbooks:
+    converge: converge.yml

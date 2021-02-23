@@ -1,0 +1,14 @@
+---
+- name: cleanup
+  hosts: all
+
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: "remove openssh host keys (directory)"
+      file:
+        path: "{{ playbook_dir }}/files"
+        state: absent
+      delegate_to: localhost
+      run_once: true
