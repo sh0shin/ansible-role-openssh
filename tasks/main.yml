@@ -56,6 +56,38 @@
   tags: [ openssh ]
 
 # rc
+- name: debian/ubuntu default ssh (template)
+  template:
+    dest: '{{ openssh_rc_sshd_debian_file }}'
+    src: "{{ lookup('first_found', params) }}"
+    #
+    mode: '{{ openssh_rc_sshd_debian_file_mode | default(openssh_file_mode) }}'
+    owner: '{{ openssh_rc_sshd_debian_file_owner | default(openssh_owner) }}'
+    group: '{{ openssh_rc_sshd_debian_file_group | default(openssh_group) }}'
+    backup: '{{ openssh_rc_sshd_debian_file_backup | default(openssh_backup) }}'
+    validate: '{{ openssh_rc_sshd_debian_file_validate | default(omit) }}'
+  vars:
+    tpl_default: "default-ssh"
+    tpl_presence: '{{ openssh_rc_sshd_debian_file_template | default(tpl_default) }}'
+    params:
+      files:
+        - '{{ tpl_presence }}.{{ inventory_hostname }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}-{{ ansible_distribution_major_version | default(0) }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_distribution }}.j2'
+        - '{{ tpl_presence }}.{{ ansible_os_family }}.j2'
+        - '{{ tpl_presence }}.j2'
+        - '{{ tpl_presence }}.in.j2'  # role default
+      paths:
+        - '{{ inventory_dir }}/templates'
+        - 'templates'
+  notify:
+    - restart_openssh
+  when: openssh_enabled
+        and ansible_os_family | string in openssh_os_family_supported
+        and ansible_os_family == 'Debian'
+  tags: [ openssh ]
+
 - name: freebsd rc.conf.d sshd (template)
   template:
     dest: '{{ openssh_rc_sshd_freebsd_file }}'
