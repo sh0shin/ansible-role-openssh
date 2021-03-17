@@ -29,6 +29,7 @@
     name: '{{ openssh_packages_debian | default([]) }}'
     state: '{{ openssh_packages_debian_state | default("latest") }}'
     update_cache: '{{ openssh_packages_debian_update_cache | default(true) }}'
+    install_recommends: '{{ openssh_packages_debian_install_recommends | default(false) }}'
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'Debian'
