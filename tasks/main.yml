@@ -300,6 +300,7 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: [ openssh ]
 
 - name: host keys pub (copy)
@@ -316,6 +317,7 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
+  ignore_errors: '{{ ansible_check_mode }}'
   tags: [ openssh ]
 
 - name: host keys (delete)
