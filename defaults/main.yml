@@ -129,7 +129,7 @@ openssh_sshd_cfg_allow_groups: []
 openssh_sshd_cfg: {}
 openssh_sshd_cfg_defaults:
   AcceptEnv: "LANG LANGUAGE LC_*"
-  AllowAgentForwarding: no
+  AllowAgentForwarding: yes
   AllowStreamLocalForwarding: no
   AllowTcpForwarding: no
   AuthorizedKeysFile: ".ssh/authorized_keys"
