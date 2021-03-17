@@ -12,37 +12,39 @@ openssh_group: "root"
 openssh_backup: yes
 
 # packages
-openssh_packages_debian:  # Debian/Ubuntu
+openssh_packages_debian:      # Debian/Ubuntu
   - openssh-server
-openssh_packages_freebsd: []  # using base openssh
-openssh_packages_redhat:  # RedHat/CentOS
+openssh_packages_freebsd: []  # FreeBSD (Base)
+openssh_packages_redhat:      # RedHat/CentOS
   - openssh-server
 
 # service
 openssh_service: "sshd"
 
 # key gen
-openssh_keys_generate: no
+openssh_keys_generate: false
 openssh_keys_generate_directory: "{{ inventory_dir }}/files/ssh"
 openssh_keys_generate_directory_mode: "0750"
 
 openssh_keys_mode: "0400"
-openssh_keys_mode_local: "0600"  # local generated keys
+openssh_keys_mode_local: "0600"       # local generated keys
 openssh_keys_owner: "root"
-openssh_keys_group: "root"
+openssh_keys_group: '{{ openssh_group }}'
 
 openssh_keys_pub_mode: "0444"
-openssh_keys_pub_mode_local: "0644"  # local generated keys
+openssh_keys_pub_mode_local: "0644"   # local generated keys
 openssh_keys_pub_owner: "root"
-openssh_keys_pub_group: "root"
+openssh_keys_pub_group: '{{ openssh_group }}'
 
 # rc
+openssh_rc_sshd_debian_file: "/etc/default/ssh"     # Debian/Ubuntu
 openssh_rc_sshd_freebsd_file: "/etc/rc.conf.d/sshd"
 openssh_rc_sshd_redhat_file: "/etc/sysconfig/sshd"  # RedHat/CentOS
 
 openssh_rc_sshd_enable: yes
-openssh_rc_sshd_flags: ''     # FreeBSD
-openssh_rc_sshd_strong_rng: 0  # RedHat/CentOS
+openssh_rc_sshd_flags: ""       # FreeBSD
+openssh_rc_sshd_opts: ""        # Debian/Ubuntu
+openssh_rc_sshd_strong_rng: 0   # RedHat/CentOS
 
 # privilege separation directory
 openssh_privsep_directory: "/var/empty"
@@ -64,39 +66,39 @@ openssh_keys_todelete:  # openssh_keys are excluded!
   - rsa1
 
 openssh_ciphers:
-  - 'chacha20-poly1305@openssh.com'
-  - 'aes256-gcm@openssh.com'
-  - 'aes128-gcm@openssh.com'
-  - 'aes256-ctr'
-  - 'aes192-ctr'
-  - 'aes128-ctr'
+  - chacha20-poly1305@openssh.com
+  - aes256-gcm@openssh.com
+  - aes128-gcm@openssh.com
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
 
 openssh_hostkeys:
-  - 'ssh-ed25519-cert-v01@openssh.com'
-  - 'ssh-ed25519'
-  - 'rsa-sha2-512'
-  - 'rsa-sha2-256'
-  #- 'ssh-rsa'
-  #- 'ssh-rsa-cert-v01@openssh.com'
-  #- 'rsa-sha2-512-cert-v01@openssh.com'
-  #- 'rsa-sha2-256-cert-v01@openssh.com'
+  - ssh-ed25519-cert-v01@openssh.com
+  - ssh-ed25519
+  - rsa-sha2-512
+  - rsa-sha2-256
+  #- ssh-rsa
+  #- ssh-rsa-cert-v01@openssh.com
+  #- rsa-sha2-512-cert-v01@openssh.com
+  #- rsa-sha2-256-cert-v01@openssh.com
 
 openssh_pubkeys: '{{ openssh_hostkeys }}'
 
 openssh_macs:
-  - 'hmac-sha2-512-etm@openssh.com'
-  - 'hmac-sha2-256-etm@openssh.com'
-  - 'umac-128-etm@openssh.com'
-  #- 'hmac-sha2-512'
-  #- 'hmac-sha2-256'
+  - hmac-sha2-512-etm@openssh.com
+  - hmac-sha2-256-etm@openssh.com
+  - umac-128-etm@openssh.com
+  #- hmac-sha2-512
+  #- hmac-sha2-256
 
 openssh_kexalgorithms:
-  - 'curve25519-sha256'
-  - 'curve25519-sha256@libssh.org'
-  #- 'diffie-hellman-group18-sha512'
-  #- 'diffie-hellman-group16-sha512'
-  #- 'diffie-hellman-group14-sha256'
-  #- 'diffie-hellman-group-exchange-sha256'
+  - curve25519-sha256
+  - curve25519-sha256@libssh.org
+  #- diffie-hellman-group18-sha512
+  #- diffie-hellman-group16-sha512
+  #- diffie-hellman-group14-sha256
+  #- diffie-hellman-group-exchange-sha256
 
 # config
 openssh_cfg_root: "/etc/ssh"
@@ -126,11 +128,11 @@ openssh_sshd_cfg_allow_groups: []
 
 openssh_sshd_cfg: {}
 openssh_sshd_cfg_defaults:
-  AcceptEnv: 'LANG LANGUAGE LC_*'
+  AcceptEnv: "LANG LANGUAGE LC_*"
   AllowAgentForwarding: no
   AllowStreamLocalForwarding: no
   AllowTcpForwarding: no
-  AuthorizedKeysFile: '.ssh/authorized_keys'
+  AuthorizedKeysFile: ".ssh/authorized_keys"
   Banner: {}
   ChallengeResponseAuthentication: no
   ClientAliveCountMax: 2
@@ -138,7 +140,7 @@ openssh_sshd_cfg_defaults:
   Compression: no
   GatewayPorts: no
   HostbasedAuthentication: no
-  LogLevel: 'INFO'
+  LogLevel: INFO
   LoginGraceTime: 30
   PasswordAuthentication: no
   PermitEmptyPasswords: no
@@ -148,12 +150,12 @@ openssh_sshd_cfg_defaults:
   Port: 22
   PrintMotd: yes
   StrictModes: yes
-  Subsystem: 'sftp internal-sftp'
-  SyslogFacility: 'AUTH'
+  Subsystem: "sftp internal-sftp"
+  SyslogFacility: AUTH
   TCPKeepAlive: no
   UseDNS: no
   UsePAM: yes
-  VersionAddendum: 'none'
+  VersionAddendum: none
   X11Forwarding: no
 
 openssh_sshd_cfg_local: {}
