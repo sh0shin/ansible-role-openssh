@@ -3,7 +3,4 @@
 openssh_group: "wheel"
 
 openssh_keys_mode: "0400"
-openssh_keys_group: "wheel"
-
 openssh_keys_pub_mode: "0440"
-openssh_keys_pub_group: "wheel"
