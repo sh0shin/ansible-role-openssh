@@ -3,6 +3,9 @@
 openssh_keys_group: "ssh_keys"
 openssh_keys_pub_group: "ssh_keys"
 
+openssh_privsep_directory: "/var/empty/sshd"
+openssh_privsep_dir_mode: "0711"
+
 # semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
 openssh_sshd_cfg_distribution:
   GSSAPIAuthentication: yes
