@@ -13,10 +13,15 @@ galaxy_info:
 
   # https://galaxy.ansible.com/api/v1/platforms/
   platforms:
+    - name: Debian
+      versions:
+        - stretch   # 9
+        - buster    # 10
+
     - name: EL
       versions:
-        - 6
         - 7
+        - 8
 
     - name: FreeBSD
       versions:
@@ -25,8 +30,13 @@ galaxy_info:
 
     - name: OpenBSD
       versions:
-        - 6.5
         - 6.6
+        - 6.7
+
+    - name: Ubuntu
+      versions:
+        - focal   # 20.04
+        - bionic  # 18.04
 
   galaxy_tags:
     - openssh
