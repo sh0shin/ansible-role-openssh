@@ -1,7 +1,7 @@
 ---
 
 openssh_os_family_supported:
-  - Debian  # Debian
+  - Debian  # Ubuntu
   - FreeBSD
   - OpenBSD
   - RedHat  # CentOS
