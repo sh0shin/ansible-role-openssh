@@ -21,7 +21,8 @@
         - 'vars'
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # packages
 - name: packages (debian/ubuntu)
@@ -33,7 +34,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'Debian'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: packages (freebsd)
   pkgng:
@@ -43,7 +45,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'FreeBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: packages (redhat/centos)
   yum:
@@ -53,7 +56,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'RedHat'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # rc
 - name: debian/ubuntu default ssh (template)
@@ -86,7 +90,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'Debian'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: freebsd rc.conf.d sshd (template)
   template:
@@ -118,7 +123,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'FreeBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: openbsd rc (disable ssh-keygen -A)
   replace:
@@ -130,7 +136,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
         and ansible_os_family == 'OpenBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: redhat/centos sysconfig sshd (template)
   template:
@@ -162,7 +169,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'RedHat'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # privilege separation directory
 - name: openssh privilege separation (directory)
@@ -185,7 +193,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_service_mgr == 'systemd'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # selinux
 # semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
@@ -204,7 +213,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys permissions (find)
   find:
@@ -220,7 +230,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys pub permissions (find)
   find:
@@ -236,7 +247,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys permissions (set)
   file:
@@ -253,7 +265,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
         and openssh_find_keys is defined
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys pub permissions (set)
   file:
@@ -270,7 +283,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
         and openssh_find_keys_pub is defined
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: generate host keys
   openssh_keypair:
@@ -284,7 +298,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys (copy)
   copy:
@@ -301,7 +316,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
   ignore_errors: '{{ ansible_check_mode }}'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys pub (copy)
   copy:
@@ -318,7 +334,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_generate
   ignore_errors: '{{ ansible_check_mode }}'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys (delete)
   file:
@@ -329,7 +346,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_delete
         and item not in openssh_keys
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: host keys pub (delete)
   file:
@@ -340,7 +358,8 @@
         and ansible_os_family | string in openssh_os_family_supported
         and openssh_keys_delete
         and item not in openssh_keys
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # moduli
 - name: safe moduli (file)
@@ -365,7 +384,8 @@
     - restart_openssh
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: safe moduli (freebsd-update.conf IgnorePaths)
   lineinfile:
@@ -378,7 +398,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'FreeBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # config
 # ssh
@@ -409,7 +430,8 @@
         - 'templates'
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: ssh config (freebsd-update.conf IgnorePaths)
   lineinfile:
@@ -422,7 +444,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'FreeBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # sshd
 - name: sshd config
@@ -454,7 +477,8 @@
     - restart_openssh
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 - name: sshd config (freebsd-update.conf IgnorePaths)
   lineinfile:
@@ -467,7 +491,8 @@
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
         and ansible_os_family == 'FreeBSD'
-  tags: [ openssh ]
+  tags:
+    - openssh
 
 # flush
 - name: flush handlers
