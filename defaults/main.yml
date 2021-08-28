@@ -83,7 +83,15 @@ openssh_hostkeys:
   #- rsa-sha2-512-cert-v01@openssh.com
   #- rsa-sha2-256-cert-v01@openssh.com
 
-openssh_pubkeys: '{{ openssh_hostkeys }}'
+openssh_pubkeys:
+  - ssh-ed25519-cert-v01@openssh.com
+  - ssh-ed25519
+  - rsa-sha2-512
+  - rsa-sha2-256
+  - ssh-rsa
+  #- ssh-rsa-cert-v01@openssh.com
+  #- rsa-sha2-512-cert-v01@openssh.com
+  #- rsa-sha2-256-cert-v01@openssh.com
 
 openssh_macs:
   - hmac-sha2-512-etm@openssh.com
