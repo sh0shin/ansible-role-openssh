@@ -74,21 +74,21 @@ openssh_ciphers:
   - aes128-ctr
 
 openssh_hostkeys:
-  - ssh-ed25519-cert-v01@openssh.com
   - ssh-ed25519
   - rsa-sha2-512
   - rsa-sha2-256
   #- ssh-rsa
+  #- ssh-ed25519-cert-v01@openssh.com
   #- ssh-rsa-cert-v01@openssh.com
   #- rsa-sha2-512-cert-v01@openssh.com
   #- rsa-sha2-256-cert-v01@openssh.com
 
 openssh_pubkeys:
-  - ssh-ed25519-cert-v01@openssh.com
   - ssh-ed25519
   - rsa-sha2-512
   - rsa-sha2-256
   - ssh-rsa
+  #- ssh-ed25519-cert-v01@openssh.com
   #- ssh-rsa-cert-v01@openssh.com
   #- rsa-sha2-512-cert-v01@openssh.com
   #- rsa-sha2-256-cert-v01@openssh.com
