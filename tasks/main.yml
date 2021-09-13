@@ -1,8 +1,8 @@
 ---
 
-# forced os variables
-- name: forced os variables
-  include: forced_os.yml
+# os variables
+- name: os variables
+  include: os.yml
   when: openssh_enabled
         and ansible_os_family | string in openssh_os_family_supported
   tags:
